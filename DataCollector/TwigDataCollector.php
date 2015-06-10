@@ -10,6 +10,7 @@
 
 namespace Elao\WebProfilerExtraBundle\DataCollector;
 
+use Doctrine\Common\Util\Debug;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -125,9 +126,29 @@ class TwigDataCollector extends DataCollector
     {
         $collectedParameters = array();
         foreach ($parameters as $name => $value) {
+			$type = in_array(gettype($value), array('object', 'resource')) ? get_class($value) : gettype($value);
+			$dump = in_array(gettype($value), array('object', 'resource')) ? false : true;
+			if(is_object($value)) {
+				if(get_class($value) == 'Doctrine\\ODM\\MongoDB\\LoggableCursor') {
+					$value = $value->toArray();
+					$dump = true;
+				}
+				else if(strpos(get_class($value), '\\Document\\') !== false ) {
+					$value = Debug::export($value, 2);
+					$dump = true;
+				}
+				else if(get_class($value) == 'Symfony\\Component\\Form\\FormView') {
+					$value = Debug::export($value, 2);
+					$dump = true;
+				}
+				else {
+					$dump = false;
+				}
+			}
+
             $collectedParameters[$name] = array(
-                'type' => in_array(gettype($value), array('object', 'resource')) ? get_class($value) : gettype($value),
-                'value' => in_array(gettype($value), array('object', 'resource', 'array')) ? null : $value,
+                'type' => $type,
+                'value' =>  $dump ? $value : null,
             );
         }
 

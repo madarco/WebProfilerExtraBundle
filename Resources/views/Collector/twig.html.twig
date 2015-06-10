@@ -91,7 +91,7 @@
                     {% endif %}
                     <code>
                         {{ parameter }}: <em style="color: #aaa">{{ metadata.type }}</em>
-                        <span style="color: #009E00">{{ value }}</span>
+                        <span style="color: #009E00">{% if metadata.type in ['boolean', 'string', 'integer'] or value is sameas(null) %}{{ value }}{% else %}{{ value|krumo }}{% endif %}</span>
                     </code>
                     {% if not loop.last %}<br />{% endif %}
                 {% endfor %}
