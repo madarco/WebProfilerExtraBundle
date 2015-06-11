@@ -21,7 +21,7 @@
         "twig/twig": "~1.12"
     },
     "require-dev": {
-        , "oodle/krumo-bundle": "*"
+        "oodle/krumo-bundle": "*"
     },
     "autoload": {
         "psr-0": {
